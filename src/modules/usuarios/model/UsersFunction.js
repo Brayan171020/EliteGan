@@ -9,7 +9,6 @@ import {Op} from "sequelize"
 import "dotenv/config";
 import nodemailer from "nodemailer";
 
-import ibmdb from "ibm_db";
 
 const dbSelect = process.env.SELECT_DB;
 let connStr =
@@ -84,49 +83,7 @@ async function saveUser(user) {
 
     //DB2
 
-    if (dbSelect == "DB2") {
-      var rol2 = await new Promise((resolve, reject) => {
-        ibmdb.open(connStr, async (err, conn) => {
-          if (err) {
-            console.log(err);
-            reject(err);
-          } else {
-            try {
-              const data = await conn.query(
-                "SELECT * FROM TECNICO.ROL WHERE NOMBRE = ?;",
-                ["usuario"]
-              );
-              await conn.query(
-                "INSERT INTO TECNICO.USUARIO (ID_US, NOMBRE, APELLIDO, EMAIL, NUM_TEL, PASSWORD, EMPRESA, CARGO, DEPARTAMENTO, TOKEN, ULTIMA_CONEXION, ID_ROLREF) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [
-                  user.id_us,
-                  user.nombre,
-                  user.apellido,
-                  user.email,
-                  user.num_tel,
-                  user.password,
-                  user.empresa,
-                  user.cargo,
-                  user.departamento,
-                  null,
-                  null,
-                  data[0].ID_ROL,
-                ]
-              );
-              conn.close(() => {
-              });
-              console.log(data[0]);
-              resolve(data[0]);
-            } catch (err) {
-              console.log(err);
-              reject(err);
-            }
-          }
-        });
-      });
-
-      return new userRol(rol2.ID_ROL, rol2.NOMBRE_ROL, rol2.DESCRIPCION);
-    }
+    
     return null;
   } catch (error) {
     console.log(error);
@@ -184,43 +141,7 @@ async function findOne(email) {
 
   //DB2
 
-  if (dbSelect == "DB2") {
-    var user2 = await new Promise((resolve, reject) => {
-      ibmdb.open(connStr, async (err, conn) => {
-        if (err) {
-          console.log(err);
-          reject(err);
-        } else {
-          try {
-            const data = await conn.query(
-              "SELECT ROL.NOMBRE AS NOMBRE_ROL,USU.NOMBRE AS NOMBRE_USU,* FROM TECNICO.USUARIO AS USU JOIN TECNICO.ROL AS ROL ON USU.ID_ROLREF = ROL.ID_ROL WHERE EMAIL = ?;",
-              [email]
-            );
-            conn.close(() => {
-              // console.log('done');
-            });
-            resolve(data[0]);
-          } catch (err) {
-            console.log(err);
-            reject(err);
-          }
-        }
-      });
-    });
-    if (!user2) return null;
-    return new user(
-      user2.NOMBRE_USU,
-      user2.APELLIDO,
-      user2.EMAIL,
-      user2.PASSWORD,
-      user2.NUM_TEL,
-      user2.EMPRESA,
-      user2.CARGO,
-      user2.DEPARTAMENTO,
-      new userRol(user2.ID_ROL, user2.NOMBRE_ROL, user2.DESCRIPCION),
-      user2.ID_US
-    );
-  }
+ 
 
   return null;
   //return users.users.find((users) => users.email == email);
@@ -308,44 +229,7 @@ async function findOneById(id) {
     );
   }
   //DB2
-  if (dbSelect == "DB2") {
-    var user2 = await new Promise((resolve, reject) => {
-      ibmdb.open(connStr, async (err, conn) => {
-        if (err) {
-          console.log(err);
-          reject(err);
-        } else {
-          try {
-            const data = await conn.query(
-              "SELECT ROL.NOMBRE AS NOMBRE_ROL,USU.NOMBRE AS NOMBRE_USU,* FROM TECNICO.USUARIO AS USU JOIN TECNICO.ROL AS ROL ON USU.ID_ROLREF = ROL.ID_ROL WHERE USU.ID_US = ?;",
-              [id]
-            );
-            conn.close(() => {
-              // console.log('done');
-            });
-            resolve(data[0]);
-          } catch (err) {
-            console.log(err);
-            reject(err);
-          }
-        }
-      });
-    });
-
-    if (!user2) return null;
-    return new user(
-      user2.NOMBRE_USU,
-      user2.APELLIDO,
-      user2.EMAIL,
-      user2.PASSWORD,
-      user2.NUM_TEL,
-      user2.EMPRESA,
-      user2.CARGO,
-      user2.DEPARTAMENTO,
-      new userRol(user2.ID_ROL, user2.NOMBRE_ROL, user2.DESCRIPCION),
-      user2.ID_US
-    );
-  }
+  
 
   return null;
   //return users.users.find((users) => users.id == id);
@@ -391,51 +275,7 @@ async function updateRol(rol, email) {
   }
 
   //DB2
-  if (dbSelect == "DB2") {
-    var user2 = await new Promise((resolve, reject) => {
-      ibmdb.open(connStr, async (err, conn) => {
-        if (err) {
-          console.log(err);
-          reject(err);
-        } else {
-          try {
-            const data = await conn.query(
-              "SELECT * FROM TECNICO.ROL WHERE NOMBRE = ?;",
-              [rol]
-            );
-            if (!data[0]) return null;
-            await conn.query(
-              "UPDATE TECNICO.USUARIO AS USU SET USU.ID_ROLREF = ? WHERE USU.EMAIL = ?;",
-              [data[0].ID_ROL, email]
-            );
-            const user1 = await conn.query(
-              "SELECT ROL.NOMBRE AS NOMBRE_ROL,USU.NOMBRE AS NOMBRE_USU,* FROM TECNICO.USUARIO AS USU JOIN TECNICO.ROL AS ROL ON USU.ID_ROLREF = ROL.ID_ROL WHERE EMAIL = ?;",
-              [email]
-            );
-            conn.close(() => {
-            });
-            resolve(user1[0]);
-          } catch (err) {
-            console.log(err);
-            reject(err);
-          }
-        }
-      });
-    });
-
-    return new user(
-      user2.NOMBRE_USU,
-      user2.APELLIDO,
-      user2.EMAIL,
-      user2.PASSWORD,
-      user2.NUM_TEL,
-      user2.EMPRESA,
-      user2.CARGO,
-      user2.DEPARTAMENTO,
-      new userRol(user2.ID_ROL, user2.NOMBRE_ROL, user2.DESCRIPCION),
-      user2.ID_US
-    );
-  }
+  
 
   return null;
 }

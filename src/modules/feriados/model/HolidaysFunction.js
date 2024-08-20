@@ -1,7 +1,6 @@
 import holidays from './HolidaysModel.js';
 import { Feriados } from '../../../database/hormiwatch/feriados.js'
 import { v4 } from "uuid";
-import ibmdb from "ibm_db";
 import "dotenv/config";
 
 let connStr = "DATABASE=SYSSOP;HOSTNAME=192.168.1.28;UID=db2inst1;PWD=H0l41324%;PORT=25000;PROTOCOL=TCPIP";
