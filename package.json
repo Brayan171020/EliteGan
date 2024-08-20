@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon ./app.js",
-    "start": "node node_modules/puppeteer/install.mjs && node ./app.js"
+    "start": "node ./app.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
