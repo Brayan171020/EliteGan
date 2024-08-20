@@ -686,12 +686,12 @@ class ProyectoController {
         </html>
         `;
       // Crear una instancia del navegador con Puppeteer
-      //const browser = await puppeteer.launch()
-      const browser = await puppeteer.launch({
+      const browser = await puppeteer.launch()
+      /*const browser = await puppeteer.launch({
         headless: true,
         executablePath: '/opt/render/.cache/puppeteer/chrome/linux-123.0.6312.122/chrome-linux64/chrome',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
+      });*/
       // Abrir una nueva página
       const page = await browser.newPage();
 
