@@ -8,7 +8,7 @@ import {rolRequired } from '../../../middlewares/validateRol.js';
 const ProyectoRouter = Router()
 
 // Endpoints
-ProyectoRouter.get('/todos', ProyectoController.index)
+ProyectoRouter.get('/todos', authRequired, ProyectoController.index)
 ProyectoRouter.get('/seleccionar/:id', authRequired, ProyectoController.getById)
 ProyectoRouter.get('/usuario/:id', authRequired, ProyectoController.getByUser)
 ProyectoRouter.post('/crear', authRequired, validateSchema(createEschema), ProyectoController.create)
